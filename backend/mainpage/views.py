@@ -4,6 +4,19 @@ from .models import Item
 
 
 def get_all_photos(request):
-    photos = Item.objects.all().values("photo")
-    photo_urls = [photo["photo"] for photo in photos if photo["photo"]]
-    return JsonResponse({"photoUrls": photo_urls}, safe=False)
+    items = Item.objects.all().values("name", "description", "price", "photo")
+
+    data = {
+        "items": [
+            {
+                "name": item["name"],
+                "description": item["description"],
+                "price": item["price"],
+                "photo": item["photo"],
+            }
+            for item in items
+            if item["photo"]
+        ]
+    }
+
+    return JsonResponse(data, safe=False)
